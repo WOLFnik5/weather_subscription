@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: Weather Subscriber API
+  version: "1.0.0"
+  description: API сервісу для підписки на погодні сповіщення та отримання інформації.
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      summary: Перевірка стану сервісу
+      description: Простий endpoint для перевірки, чи працює сервер.
+      responses:
+        '200':
+          description: Сервер відповідає "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
+  /subscriptions:
+    post:
+      summary: Створення підписки
+      description: Створює нову підписку користувача на прогнози погоди.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                city_id:
+                  type: integer
+                  example: 123
+                frequency:
+                  type: string
+                  enum:
+                    - daily
+                    - hourly
+                  example: daily
+              required:
+                - email
+                - city_id
+                - frequency
+      responses:
+        '201':
+          description: Підписку створено успішно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          description: Невірний вхідний запит (поганий формат або відсутні поля)
+        '500':
+          description: Помилка створення підписки
+    get:
+      summary: Отримання списку підписок
+      description: Повертає список усіх підписок.
+      responses:
+        '200':
+          description: Список підписок
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+        '500':
+          description: Помилка отримання даних
+
+  /cities:
+    get:
+      summary: Отримання списку міст з пагінацією
+      description: Повертає список міст з можливістю задавати кількість елементів та зсув.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Кількість міст для повернення
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Зсув (кількість пропущених елементів) для пагінації
+      responses:
+        '200':
+          description: Список міст
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/City'
+        '500':
+          description: Помилка отримання даних
+
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: user@example.com
+        city_id:
+          type: integer
+          example: 123
+        frequency:
+          type: string
+          enum:
+            - daily
+            - hourly
+          example: daily
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-05-15T12:34:56Z"
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Kyiv
+        country:
+          type: string
+          example: Ukraine
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-05-15T12:34:56Z"
