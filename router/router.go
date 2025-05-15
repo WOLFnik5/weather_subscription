@@ -16,7 +16,7 @@ func SetupRouter() *mux.Router {
 
 	r.HandleFunc("/subscriptions", handler.HandleCreateSubscription).Methods("POST")
 	r.HandleFunc("/subscriptions", handler.HandleListSubscriptions).Methods("GET")
-	//r.HandleFunc("/cities", handler.HandleListCities).Methods("GET")
+	r.HandleFunc("/cities", handler.HandleListCities).Methods("GET")
 
 	return r
 }
