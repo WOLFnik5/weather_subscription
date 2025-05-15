@@ -1,0 +1,16 @@
+INSERT INTO cities (id, name, country) VALUES
+  (1, 'Kyiv', 'Ukraine'),
+  (2, 'Kharkiv', 'Ukraine'),
+  (3, 'Odesa', 'Ukraine'),
+  (4, 'Dnipro', 'Ukraine'),
+  (5, 'Lviv', 'Ukraine'),
+  (6, 'London', 'United Kingdom'),
+  (7, 'Berlin', 'Germany'),
+  (8, 'Paris', 'France'),
+  (9, 'Rome', 'Italy'),
+  (10, 'Madrid', 'Spain'),
+  (11, 'Warsaw', 'Poland'),
+  (12, 'Prague', 'Czech Republic'),
+  (13, 'Vienna', 'Austria'),
+  (14, 'Budapest', 'Hungary'),
+  (15, 'Amsterdam', 'Netherlands');

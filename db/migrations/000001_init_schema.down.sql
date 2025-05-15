@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS weather_forecasts;
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS cities;
+DROP TABLE IF EXISTS users;
