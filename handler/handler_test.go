@@ -20,50 +20,20 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// mysqlUserFromEnv := "mykola"
-	// mysqlPasswordFromEnv := "4444"
-	//  mysqlHost := "db"
-
-	// if err == nil {
-	// 	log.Println("Loaded environment variables from .env_test")
-	// } else {
-	// 	log.Println("No .env_test file found or error loading it, using existing environment variables or defaults.")
-	// }
 	mysqlUserFromEnv := os.Getenv("MYSQL_USER")
 	mysqlHost := os.Getenv("MYSQL_HOST")
 	mysqlPort := os.Getenv("MYSQL_PORT")
 	testDBName := os.Getenv("MYSQL_DATABASE")
 
-	// mysqlHostLocal := "127.0.0.1"
-	// mysqlPort := "3306"
-	// testDBName := "weather_subscriber_test"
-
 	log.Printf("TestMain: Attempting to connect to test DB: user=%s, host=%s, port=%s, dbname=%s\n", mysqlUserFromEnv, mysqlHost, mysqlPort, testDBName)
-	// os.Setenv("MYSQL_USER", mysqlUserFromEnv)
-	// os.Setenv("MYSQL_PASSWORD", mysqlPasswordFromEnv)
-	// os.Setenv("MYSQL_HOST", mysqlHost)
-	// os.Setenv("MYSQL_PORT", mysqlPort)
-	// os.Setenv("MYSQL_DATABASE", testDBName)
+
 	err := db.Connect()
 
 	if err != nil {
 		log.Printf("TestMain: Failed to connect to DB with host '%s' (error: %v)", mysqlHost, err)
-		// os.Setenv("MYSQL_USER", mysqlUserFromEnv)
-		// os.Setenv("MYSQL_PASSWORD", mysqlPasswordFromEnv)
-		// os.Setenv("MYSQL_HOST", mysqlHostLocal)
-		// os.Setenv("MYSQL_PORT", mysqlPort)
-		// os.Setenv("MYSQL_DATABASE", testDBName)
-		// err = db.Connect()
+
 		panic(fmt.Sprintf("TestMain: Failed to connect to database for testing: %v. \nEnsure the database '%s' exists and user '%s' has ALL PRIVILEGES on it. \nEnsure migrations have been applied to '%s'.", err, testDBName, mysqlUserFromEnv, testDBName))
-		// if err != nil {
-		// 	// Встановлюємо MYSQL_ROOT_PASSWORD, якщо він не встановлений, для повідомлення паніки
-		// 	// Це значення з вашого .env файлу
-		// 	if os.Getenv("MYSQL_ROOT_PASSWORD") == "" {
-		// 		os.Setenv("MYSQL_ROOT_PASSWORD", "3333")
-		// 	}
-		// 	panic(fmt.Sprintf("TestMain: Failed to connect to any database for testing: %v. \nEnsure the database '%s' exists and user '%s' has ALL PRIVILEGES on it. \nEnsure migrations have been applied to '%s'. \nYou might need to run: \n1. docker-compose up -d db \n2. docker-compose exec db mysql -uroot -p%s -e \"CREATE DATABASE IF NOT EXISTS %s;\" \n3. docker-compose exec db mysql -uroot -p%s -e \"GRANT ALL PRIVILEGES ON %s.* TO '%s'@'%%';\" \n4. (Using PowerShell/CMD): docker-compose run --rm --entrypoint \"\" migrate migrate -path=/migrations -database=\"mysql://%s:%s@tcp(db:3306)/%s?parseTime=true&multiStatements=true\" up",
-		// 		err, testDBName, mysqlUserFromEnv, testDBName, os.Getenv("MYSQL_ROOT_PASSWORD"), testDBName, os.Getenv("MYSQL_ROOT_PASSWORD"), testDBName, mysqlUserFromEnv, mysqlUserFromEnv, mysqlPasswordFromEnv, testDBName))
-		// }
+
 	}
 	log.Println("TestMain: Successfully connected to test DB.")
 
@@ -81,14 +51,13 @@ func clearTables() {
 	log.Println("clearTables: Clearing tables in test DB...")
 
 	db.DB.Exec("DELETE FROM subscriptions")
-	// db.DB.Exec("DELETE FROM weather_forecasts") // Якщо ця таблиця використовується
+
 	db.DB.Exec("DELETE FROM users")
 	db.DB.Exec("DELETE FROM cities")
 
 	db.DB.Exec("ALTER TABLE users AUTO_INCREMENT = 1")
 	db.DB.Exec("ALTER TABLE cities AUTO_INCREMENT = 1")
 	db.DB.Exec("ALTER TABLE subscriptions AUTO_INCREMENT = 1")
-	// db.DB.Exec("ALTER TABLE weather_forecasts AUTO_INCREMENT = 1")
 
 	// Додамо кілька міст для тестів. Використовуємо ON DUPLICATE KEY UPDATE для ідемпотентності.
 	_, err := db.DB.Exec("INSERT INTO cities (id, name, country) VALUES (1, 'Test City', 'Test Country'), (2, 'Another City', 'Test Country') ON DUPLICATE KEY UPDATE name=VALUES(name), country=VALUES(country)")
@@ -129,7 +98,7 @@ func (suite *HandlerTestSuite) TestIntegration_CreateAndListSubscriptions() {
 	// 1. Створення підписки
 	payload := subscriptionInput{
 		Email:     "integration@example.com",
-		CityID:    1, // Припускаємо, місто з ID 1 існує (засіяне clearTables)
+		CityID:    1, // Припускаємо, місто з ID 1 існує (заповнене clearTables)
 		Frequency: "hourly",
 	}
 	body, _ := json.Marshal(payload)

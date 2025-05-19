@@ -29,8 +29,7 @@ func TestValidateFrequency(t *testing.T) {
 			err := ValidateFrequency(tc.frequency)
 			if tc.expectErr {
 				asserter.Error(err)
-				// Можна також перевірити текст помилки, якщо потрібно
-				// asserter.EqualError(err, "invalid frequency, must be 'daily' or 'hourly'")
+				asserter.EqualError(err, "invalid frequency, must be 'daily' or 'hourly'")
 			} else {
 				asserter.NoError(err)
 			}

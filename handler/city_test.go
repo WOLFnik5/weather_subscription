@@ -14,7 +14,7 @@ import (
 // --- Тести для HandleListCities ---
 
 func TestHandleListCities_Success_DefaultParams(t *testing.T) {
-	clearTables() // Викликаємо для очищення та заповнення містами
+	clearTables()
 
 	req, err := http.NewRequest("GET", "/cities", nil)
 	assert.NoError(t, err)
@@ -109,12 +109,6 @@ func TestHandleListCities_Success_WithParams(t *testing.T) {
 }
 
 // --- Інтеграційні тести для City за допомогою Suite ---
-// Ми можемо додати ці тести до існуючого HandlerTestSuite
-// або створити окремий CityHandlerTestSuite. Для простоти,
-// припустимо, що ми додаємо їх до HandlerTestSuite в handler_test.go,
-// просто переконавшись, що маршрут /cities доданий до suite.router.
-
-// Приклад тесту, який можна додати до HandlerTestSuite:
 func (suite *HandlerTestSuite) TestIntegration_ListCities_Pagination() {
 	// clearTables вже викликається в suite.SetupTest() і додає 2 міста.
 	// Додамо ще кілька для тестування пагінації.
@@ -142,7 +136,3 @@ func (suite *HandlerTestSuite) TestIntegration_ListCities_Pagination() {
 		suite.Assert().Equal("Paged City 1", cities[1].Name) // ID 3
 	}
 }
-
-// Щоб запустити тести з city_test.go, ви можете просто виконати `go test`
-// у каталозі `handler`. Якщо ви додали TestIntegration_ListCities_Pagination
-// до HandlerTestSuite, він запуститься разом з іншими тестами suite.

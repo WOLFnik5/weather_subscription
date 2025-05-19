@@ -39,14 +39,14 @@ cp .env.dist .env
 > Увага: переконайся, що каталог `./db/migrations` містить файли міграцій.
 
 ```bash
-docker-compose up -d db
-docker-compose run --rm migrate up
+docker compose up -d db
+docker compose run --rm migrate up
 ```
 
 ### 4. Збірка та запуск API додатку
 
 ```bash
-docker-compose up --build -d app
+docker compose up --build -d app
 ```
 
 Додаток буде доступний на: [http://localhost:8080](http://localhost:8080)
@@ -55,7 +55,8 @@ docker-compose up --build -d app
 
 ```bash
 docker compose up -d db_test
-docker-compose --env-file .env_test run --rm migrate_test up
+docker compose --env-file .env_test run --rm migrate_test up
+docker compose run tester
 ```
 
 ---
