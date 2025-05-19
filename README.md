@@ -51,6 +51,13 @@ docker-compose up --build -d app
 
 Додаток буде доступний на: [http://localhost:8080](http://localhost:8080)
 
+### 5. Запуск тестів
+
+```bash
+docker compose up -d db_test
+docker-compose --env-file .env_test run --rm migrate_test up
+```
+
 ---
 
 ##  API Документація

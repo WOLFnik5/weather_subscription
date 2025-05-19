@@ -1,6 +1,9 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: test-stage
+
     ports:
       - "8080:8080"
     env_file:
@@ -14,7 +17,7 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     volumes:
@@ -31,9 +34,49 @@ services:
     entrypoint: [
       "migrate",
       "-path=/migrations",
-      "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(db:3306)/${MYSQL_DB}?parseTime=true"
+      "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(db:3306)/${MYSQL_DATABASE}?parseTime=true"
+    ]  
+
+  db_test:
+    image: mysql:8.0
+    env_file:
+      - .env_test
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_test_data:/var/lib/mysql
+
+  migrate_test:
+    image: migrate/migrate:4
+    volumes:
+      - ./db/migrations:/migrations
+    depends_on:
+      - db_test
+    env_file:
+      - .env_test
+    entrypoint: [
+      "migrate",
+      "-path=/migrations",
+      "-database=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(db_test:3306)/${MYSQL_DATABASE}?parseTime=true&multiStatements=true"
     ]
 
+  tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test-stage
+    volumes:
+      - .:/app # Робоча директорія в test-stage має бути /app
+    depends_on:
+      - db_test
+      # db_test: # Тести залежать від тестової БД
+        # condition: service_healthy
+        # migrate_test:
+        # condition: service_completed_successfully # Якщо migrate_test - це one-shot сервіс
+    env_file:
+      - .env_test
+    command: ["go", "test", "-v", "./..."]
 
 volumes:
   db_data:
+  db_test_data:

@@ -13,8 +13,13 @@ COPY . .
 # Компільовуємо бінарник у папку /app/bin
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/bin/weather_subscriber ./main.go
 
-# Другий етап: мінімальний образ для запуску
-FROM alpine:3.18
+
+# Стадія для тестів
+FROM builder AS test-stage
+
+
+# Фінальний етап: мінімальний образ для запуску
+FROM alpine:3.18 AS final
 
 # Копіюємо бінарник з першого етапу
 COPY --from=builder /app/bin/weather_subscriber /usr/local/bin/weather_subscriber

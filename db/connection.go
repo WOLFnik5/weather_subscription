@@ -17,7 +17,7 @@ func Connect() error {
 	password := os.Getenv("MYSQL_PASSWORD")
 	host := os.Getenv("MYSQL_HOST")
 	port := os.Getenv("MYSQL_PORT")
-	dbname := os.Getenv("MYSQL_DB")
+	dbname := os.Getenv("MYSQL_DATABASE")
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, host, port, dbname)
 	for i := 0; i < 10; i++ {
