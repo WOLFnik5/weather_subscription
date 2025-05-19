@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      target: test-stage
+      target: final
 
     ports:
       - "8080:8080"
