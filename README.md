@@ -23,8 +23,8 @@
 ### 1. Клонування репозиторію
 
 ```bash
-git clone https://github.com/your-username/weather_subscriber.git
-cd weather_subscriber
+git clone https://github.com/WOLFnik5/weather_subscription.git
+cd weather_subscription
 ```
 
 ### 2. Налаштування `.env`
